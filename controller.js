@@ -3,8 +3,7 @@ const multer = require('multer');
 
 const getban = async (req, res) => {
     try {
-      const bannerId = req.params.id;
-      const banget = await Banner.findById(bannerId);
+      const banget = await Banner.find();
       res.json(banget);
     } catch (error) {
       console.error('Error fetching banner:', error);

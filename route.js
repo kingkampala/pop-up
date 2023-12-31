@@ -3,7 +3,7 @@ const {getban, postban, updatexp, deleteban} = require('./controller');
 const router = express.Router();
 
 
-router.get('/:id', getban);
+router.get('/', getban);
 
 router.post('/', postban);
 
