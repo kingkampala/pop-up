@@ -10,6 +10,15 @@ app.options('*', cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
+app.use((req, res, next) => {
+  res.set({
+    "Access-Control-Allow-Origin": process.env.DH,
+    "Access-Control-Allow-Methods": "*",
+    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+  });
+  next();
+});
+
 const bannerRoute = require('./route');
 
 app.use(`/banner`, bannerRoute);
