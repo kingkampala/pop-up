@@ -10,13 +10,18 @@ app.options('*', cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
+const allowedOrigins = [process.env.DH, process.env.HD];
+
 app.use((req, res, next) => {
-  res.set({
-    "Access-Control-Allow-Origin": process.env.DH,
-    "Access-Control-Allow-Methods": "*",
-    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-  });
-  next();
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+      res.set({
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+      });
+    }
+    next();
 });
 
 const bannerRoute = require('./route');
