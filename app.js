@@ -6,11 +6,10 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 
 app.use(cors());
-app.options('*', cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
-const allowedOrigins = [process.env.DH, process.env.HD];
+/*const allowedOrigins = [process.env.DH, process.env.HD];
 
 app.use((req, res, next) => {
     const origin = req.headers.origin;
@@ -22,7 +21,7 @@ app.use((req, res, next) => {
       });
     }
     next();
-});
+});*/
 
 const bannerRoute = require('./route');
 
