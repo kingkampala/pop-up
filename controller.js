@@ -1,5 +1,5 @@
 const {Banner} = require('./schema');
-const multer = require('multer');
+//const multer = require('multer');
 
 const getban = async (req, res) => {
     try {
@@ -11,10 +11,10 @@ const getban = async (req, res) => {
     }
 };
 
-const storage = multer.memoryStorage(); // Store files in memory (you can configure it to save to disk)
+/*const storage = multer.memoryStorage(); // Store files in memory (you can configure it to save to disk)
 const upload = multer({ storage: storage }).single('image');
 
-/*const postban = async (req, res) => {
+const postban = async (req, res) => {
   try {
     // Use Multer to handle file upload
     upload(req, res, async function (err) {
@@ -54,7 +54,7 @@ const upload = multer({ storage: storage }).single('image');
     console.error('Error posting banner:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-};*/
+};
 
 const postban = async (req, res) => {
   try {
@@ -97,15 +97,48 @@ const postban = async (req, res) => {
     console.error('Error posting banner:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+};*/
+
+const postban = async (req, res) => {
+  try {
+    const { text, expiryDate, base64Image } = req.body;
+
+    const parsedDate = Date.parse(expiryDate);
+    parsedDate.setHours(0, 0, 0, 0);
+    const isValidDate = !isNaN(parsedDate.getTime());
+
+    if (!isValidDate) {
+      return res.status(400).json({ error: 'Invalid date format for expiryDate.' });
+    }
+
+    const formattedExpiryDate = new Date(parsedDate);
+
+    if (!base64Image) {
+      return res.status(400).json({ error: 'No image file provided.' });
+    }
+
+    // Convert the base64 string to a Buffer
+    const imageBuffer = Buffer.from(base64Image.split(',')[1], 'base64');
+
+    const newBanner = new Banner({ base64Image: imageBuffer, text, expiryDate: formattedExpiryDate });
+    await newBanner.save();
+
+    res.json({ message: 'Banner posted successfully.', newBanner });
+  } catch (error) {
+    console.error('Error posting banner:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
 const updatexp = async (req, res) => {
     try {
       const bannerId = req.params.id;
       const { newExpiryDate } = req.body;
-
-      /*const parsedDate = Date.parse(newExpiryDate);
-      const isValidDate = !isNaN(parsedDate);
+      
+      const parsedDate = Date.parse(newExpiryDate);
+      parsedDate.setHours(0, 0, 0, 0);
+      
+      /*const isValidDate = !isNaN(parsedDate);
 
       if (!isValidDate) {
         return res.status(400).json({ error: 'Invalid date format for newExpiryDate.' });
