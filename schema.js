@@ -6,9 +6,9 @@ const mongoose = require('mongoose');
 });*/
 
 const bannerSchema = new mongoose.Schema({
-  image: Buffer,
+  image: String/*Buffer*/,
   text: String,
-  expiryDate: Date,
+  expiryDate: String/*Date*/,
 });
 
 //const PopUpContent = mongoose.model('PopUpContent', popUpContentSchema);
