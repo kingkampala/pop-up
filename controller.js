@@ -103,8 +103,10 @@ const postban = async (req, res) => {
   try {
     const { text, expiryDate, image } = req.body;
 
-    const parsedDate = Date.parse(expiryDate);
+    const parsedTimestamp = Date.parse(expiryDate);
+    const parsedDate = new Date(parsedTimestamp);
     parsedDate.setHours(0, 0, 0, 0);
+
     const isValidDate = !isNaN(parsedDate.getTime());
 
     if (!isValidDate) {
