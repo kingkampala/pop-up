@@ -126,7 +126,7 @@ const postban = async (req, res) => {
     res.json({ message: 'Banner posted successfully.', newBanner });
   } catch (error) {
     console.error('Error posting banner:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Error', details: error });
   }
 };
 
@@ -137,7 +137,7 @@ const updatexp = async (req, res) => {
       
       const parsedDate = Date.parse(newExpiryDate);
       parsedDate.setHours(0, 0, 0, 0);
-      
+
       /*const isValidDate = !isNaN(parsedDate);
 
       if (!isValidDate) {
