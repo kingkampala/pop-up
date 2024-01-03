@@ -18,7 +18,10 @@ const postban = async (req, res) => {
   try {
     // Use Multer to handle file upload
     upload(req, res, async function (err) {
-      if (err) {
+      if (err instanceof multer.MulterError) {
+        console.error('Multer Error:', err);
+        return res.status(500).json({ error: 'Error uploading image.' });
+      } else if (err) {
         console.error('Error uploading image:', err);
         return res.status(500).json({ error: 'Error uploading image.' });
       }
@@ -34,10 +37,13 @@ const postban = async (req, res) => {
 
       const formattedExpiryDate = new Date(parsedDate);
 
+      if (!req.file) {
+        return res.status(400).json({ error: 'No image file provided.' });
+      }
+
       // Access the uploaded image data from the request
       const imageBuffer = req.file.buffer;
 
-      // Save the image data to MongoDB
       const newBanner = new Banner({ image: imageBuffer, text, expiryDate: formattedExpiryDate });
       await newBanner.save();
 
