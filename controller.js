@@ -101,7 +101,7 @@ const postban = async (req, res) => {
 
 const postban = async (req, res) => {
   try {
-    const { text, expiryDate, base64Image } = req.body;
+    const { text, expiryDate, image } = req.body;
 
     const parsedDate = Date.parse(expiryDate);
     parsedDate.setHours(0, 0, 0, 0);
@@ -113,14 +113,11 @@ const postban = async (req, res) => {
 
     const formattedExpiryDate = new Date(parsedDate);
 
-    if (!base64Image) {
+    if (!image) {
       return res.status(400).json({ error: 'No image file provided.' });
     }
 
-    // Convert the base64 string to a Buffer
-    const imageBuffer = Buffer.from(base64Image.split(',')[1], 'base64');
-
-    const newBanner = new Banner({ base64Image: imageBuffer, text, expiryDate: formattedExpiryDate });
+    const newBanner = new Banner({ image, text, expiryDate: formattedExpiryDate });
     await newBanner.save();
 
     res.json({ message: 'Banner posted successfully.', newBanner });

@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 });*/
 
 const bannerSchema = new mongoose.Schema({
-  base64Image: Buffer,
+  image: String,
   text: String,
   expiryDate: Date,
 });
