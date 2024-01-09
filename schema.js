@@ -1,17 +1,16 @@
 const mongoose = require('mongoose');
 
-/*const popUpContentSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-});*/
-
 const bannerSchema = new mongoose.Schema({
-  image: String,
   text: String,
   expiryDate: Date,
+  cloudinaryPublicId: String,
+  cloudinaryUrl: String,
+  dateCreated: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-//const PopUpContent = mongoose.model('PopUpContent', popUpContentSchema);
 const Banner = mongoose.model('Banner', bannerSchema);
 
 module.exports = {Banner};

@@ -1,5 +1,6 @@
 const {Banner} = require('./schema');
-//const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+require('dotenv').config();
 
 const getban = async (req, res) => {
     try {
@@ -11,10 +12,7 @@ const getban = async (req, res) => {
     }
 };
 
-/*const storage = multer.memoryStorage(); // Store files in memory (you can configure it to save to disk)
-const upload = multer({ storage: storage }).single('image');
-
-const postban = async (req, res) => {
+/*const postban = async (req, res) => {
   try {
     // Use Multer to handle file upload
     upload(req, res, async function (err) {
@@ -97,7 +95,7 @@ const postban = async (req, res) => {
     console.error('Error posting banner:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-};*/
+};
 
 const postban = async (req, res) => {
   try {
@@ -126,6 +124,55 @@ const postban = async (req, res) => {
   } catch (error) {
     console.error('Error posting banner:', error);
     res.status(500).json({ error: 'Internal Server Error', details: error });
+  }
+};*/
+
+cloudinary.config({
+  cloud_name: 'dbja3jqam',
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+  secure: true,
+});
+
+const postban = async (req, res) => {
+  try {
+    const { text, expiryDate } = req.body;
+
+    const parsedTimestamp = Date.parse(expiryDate);
+    const parsedDate = new Date(parsedTimestamp);
+    parsedDate.setHours(0, 0, 0, 0);
+
+    const isValidDate = !isNaN(parsedDate.getTime());
+
+    if (!isValidDate) {
+      return res.status(400).json({ error: 'Invalid date format for expiryDate.' });
+    }
+
+    const formattedExpiryDate = new Date(parsedDate);
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided.' });
+    }
+
+    const cloudinaryUploadResult = await cloudinary.uploader.upload(req.file.path, {
+      resource_type: 'auto',
+    });
+
+    console.log('Cloudinary Upload Result:', cloudinaryUploadResult);
+
+    const newBanner = new Banner({
+      text,
+      expiryDate: formattedExpiryDate,
+      cloudinaryPublicId: cloudinaryUploadResult.public_id,
+      cloudinaryUrl: cloudinaryUploadResult.secure_url,
+    });
+
+    await newBanner.save();
+
+    res.json({ message: 'Banner posted successfully.', newBanner });
+  } catch (error) {
+    console.error('Error posting banner:', error);
+    res.status(500).json({ error: 'internal server error', details: error });
   }
 };
 
