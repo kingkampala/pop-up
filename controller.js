@@ -98,8 +98,11 @@ const updatexp = async (req, res) => {
 const deleteban = async (req, res) => {
   try {
     const bannerId = req.params.id;
+    console.log(bannerId);
 
-    if (!mongoose.Types.ObjectId.isValid(bannerId)) {
+    banId = mongoose.Types.ObjectId.isValid(bannerId);
+
+    if (!banId) {
       return res.status(400).json({ error: 'Invalid banner ID.' });
     }
 
