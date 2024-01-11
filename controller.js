@@ -98,6 +98,10 @@ const deleteban = async (req, res) => {
   try {
     const bannerId = req.params.id;
 
+    if (!mongoose.Types.ObjectId.isValid(bannerId)) {
+      return res.status(400).json({ error: 'Invalid banner ID.' });
+    }
+
     const bannerToDelete = await Banner.findById(bannerId);
     if (!bannerToDelete) {
       return res.status(404).json({ error: 'Banner not found.' });
