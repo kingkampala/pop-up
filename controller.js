@@ -1,4 +1,5 @@
 const {Banner} = require('./schema');
+const mongoose = require('mongoose');
 const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
 
