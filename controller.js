@@ -108,7 +108,7 @@ const deleteban = async (req, res) => {
 
     const bannerToDelete = await Banner.findById(bannerId);
     if (!bannerToDelete) {
-      return res.status(404).json({ error: 'Banner not found.' });
+      return res.status(200).json({ error: 'Banner not found.' });
     }
 
     const del = await Banner.findByIdAndDelete(bannerId);
