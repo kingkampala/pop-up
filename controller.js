@@ -103,7 +103,7 @@ const deleteban = async (req, res) => {
     banId = mongoose.Types.ObjectId.isValid(bannerId);
 
     if (!banId) {
-      return res.status(400).json({ error: 'Invalid banner ID.' });
+      return res.status(200).json({ error: 'Invalid banner ID.' });
     }
 
     const bannerToDelete = await Banner.findById(bannerId);
