@@ -1,6 +1,7 @@
 const {Banner} = require('./schema');
 const mongoose = require('mongoose');
 const cloudinary = require('cloudinary').v2;
+const cron = require('node-cron');
 require('dotenv').config();
 
 const getban = async (req, res) => {
@@ -95,6 +96,21 @@ const updatexp = async (req, res) => {
     }
 };
 
+cron.schedule('0 0 * * *', async () => {
+  try {
+    // Find banners with expiry date less than or equal to the current date
+    const expiredBanners = await Banner.find({ expiryDate: { $lte: new Date() } });
+
+    // Delete expired banners
+    for (const banner of expiredBanners) {
+      await Banner.findByIdAndDelete(banner._id);
+      console.log(`Banner with ID ${banner._id} deleted due to expiry.`);
+    }
+  } catch (error) {
+    console.error('Error during automatic banner deletion:', error);
+  }
+});
+
 const deleteban = async (req, res) => {
   try {
     const bannerId = req.params.id;
@@ -108,10 +124,15 @@ const deleteban = async (req, res) => {
 
     const bannerToDelete = await Banner.findById(bannerId);
     if (!bannerToDelete) {
+      return res.status(200).json({ error: 'Banner does not exist.' });
+    }
+
+    const del = await Banner.findByIdAndDelete(bannerId, { projection: { expiryDate: 0, dateCreated: 0 } });
+
+    if (!del) {
       return res.status(200).json({ error: 'Banner not found.' });
     }
 
-    const del = await Banner.findByIdAndDelete(bannerId);
     res.status(200).json({ success: 'banner deleted successfully', del });
   } catch (error) {
     console.error (error);
