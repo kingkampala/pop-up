@@ -127,13 +127,20 @@ const deleteban = async (req, res) => {
       return res.status(200).json({ error: 'Banner does not exist.' });
     }
 
-    const del = await Banner.findByIdAndDelete(bannerId, { projection: { expiryDate: 0, dateCreated: 0 } });
+    const del = await Banner.findByIdAndDelete(bannerId);
+
+    const responseDel = {
+      _id: del._id,
+      text: del.text,
+      cloudinaryPublicId: del.cloudinaryPublicId,
+      cloudinaryUrl: del.cloudinaryUrl
+    };
 
     if (!del) {
       return res.status(200).json({ error: 'Banner not found.' });
     }
 
-    res.status(200).json({ success: 'banner deleted successfully', del });
+    res.status(200).json({ success: 'banner deleted successfully', del: responseDel });
   } catch (error) {
     console.error (error);
     res.status(500).json({ error: 'Internal Server Error' });
